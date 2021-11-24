@@ -1,5 +1,7 @@
 // import icons from "../img/icons.svg"; //Parcel 1
 import icons from "url:../img/icons.svg"; //Parcel 2 import icons variable
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 console.log(icons); //path to the file
 
 const recipeContainer = document.querySelector(".recipe");
