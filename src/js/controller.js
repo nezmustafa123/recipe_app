@@ -35,12 +35,17 @@ const renderSpinner = function (parentEl) {
 const showRecipe = async function () {
   //await promise inside async function
   try {
+    const id = window.location.hash.slice(1); //get id from the url bar (hash) from first character
+    console.log(typeof id);
+
+    if (!id) return;
+
     //loading recipe    //render spinner
     renderSpinner(recipeContainer);
     const res = await fetch(
       //use url to get exact recipe returns a promise
       // `https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886`
-      `https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc990`
+      `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`
     );
     const data = await res.json(); //returns another promise
     //data from serer, ok property is coming from response istaself
@@ -167,4 +172,9 @@ const showRecipe = async function () {
   }
 };
 
-showRecipe();
+//run same eventhandler for diffferent events
+["hashchange", "load"].forEach((ev) => window.addEventListener(ev, showRecipe)); //loop through and change events
+// window.addEventListener("hashchange", showRecipe);
+// //run show recipe function whenever hash changes
+// window.addEventListener("load", showRecipe);
+// //event for entire page loading fired off when page loads
