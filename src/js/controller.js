@@ -1,8 +1,10 @@
+import * as model from "./model.js";
+import recipeView from "./views/recipeView.js";
 // import icons from "../img/icons.svg"; //Parcel 1
 import icons from "url:../img/icons.svg"; //Parcel 2 import icons variable
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-console.log(icons); //path to the file
+//console.log(icons); //path to the file
 
 const recipeContainer = document.querySelector(".recipe");
 
@@ -32,42 +34,23 @@ const renderSpinner = function (parentEl) {
   parentEl.insertAdjacentHTML("afterbegin", markup);
 };
 
-const showRecipe = async function () {
+const controlRecipes = async function () {
   //await promise inside async function
   try {
     const id = window.location.hash.slice(1); //get id from the url bar (hash) from first character
-    console.log(typeof id);
+    // console.log(typeof id);
 
     if (!id) return;
-
-    //loading recipe    //render spinner
+    //render spinner
     renderSpinner(recipeContainer);
-    const res = await fetch(
-      //use url to get exact recipe returns a promise
-      // `https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886`
-      `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`
-    );
-    const data = await res.json(); //returns another promise
-    //data from serer, ok property is coming from response istaself
-    // if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-    //invalid id 400
-    console.log(res);
-    console.log(data);
-    //create new object get rid of underscores
-    let { recipe } = data.data; //recipe object destructure it
-    recipe = {
-      id: recipe.id,
-      title: recipe.title,
-      publisher: recipe.publisher,
-      sourceUrl: recipe.source_url,
-      image: recipe.image_url,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-      ingredients: recipe.ingredients,
-    };
-    console.log(recipe);
 
-    // 2_.Rendering recipe
+    //1 loading recipe
+    await model.loadRecipe(id); //have to await it returns a promise so have to await it
+    const { recipe } = model.state;
+    console.log(recipe);
+    // 2.Rendering recipe
+
+    recipeView.render(model.state.recipe); //add render method that takes indata and stores in boject
 
     const markup = `<figure class="recipe__fig">
     <img src="${recipe.image}" alt="${recipe.title}" class="recipe__img" />
@@ -162,10 +145,6 @@ const showRecipe = async function () {
       </svg>
     </a>
   </div>`;
-
-    recipeContainer.innerHTML = "";
-
-    recipeContainer.insertAdjacentHTML("afterbegin", markup);
   } catch (err) {
     //error being caught here
     alert(err);
@@ -173,8 +152,10 @@ const showRecipe = async function () {
 };
 
 //run same eventhandler for diffferent events
-["hashchange", "load"].forEach((ev) => window.addEventListener(ev, showRecipe)); //loop through and change events
-// window.addEventListener("hashchange", showRecipe);
+["hashchange", "load"].forEach((ev) =>
+  window.addEventListener(ev, controlRecipes)
+); //loop through and change events
+// window.addEventListener("hashchange", controlRecipes);
 // //run show recipe function whenever hash changes
-// window.addEventListener("load", showRecipe);
+// window.addEventListener("load", controlRecipes);
 // //event for entire page loading fired off when page loads

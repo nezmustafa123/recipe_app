@@ -460,12 +460,15 @@ function hmrAcceptRun(bundle, id) {
 
 },{}],"lA0Es":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+var _modelJs = require("./model.js");
+var _recipeViewJs = require("./views/recipeView.js");
+var _recipeViewJsDefault = parcelHelpers.interopDefault(_recipeViewJs);
 // import icons from "../img/icons.svg"; //Parcel 1
 var _iconsSvg = require("url:../img/icons.svg"); //Parcel 2 import icons variable
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 var _stable = require("core-js/stable");
 var _runtime = require("regenerator-runtime/runtime");
-console.log(_iconsSvgDefault.default); //path to the file
+//console.log(icons); //path to the file
 const recipeContainer = document.querySelector(".recipe");
 const timeout = function(s) {
     return new Promise(function(_, reject) {
@@ -489,37 +492,20 @@ const renderSpinner = function(parentEl) {
     parentEl.innerHTML = "";
     parentEl.insertAdjacentHTML("afterbegin", markup);
 };
-const showRecipe = async function() {
+const controlRecipes = async function() {
     //await promise inside async function
     try {
         const id = window.location.hash.slice(1); //get id from the url bar (hash) from first character
-        console.log(typeof id);
+        // console.log(typeof id);
         if (!id) return;
-        //loading recipe    //render spinner
+        //render spinner
         renderSpinner(recipeContainer);
-        const res = await fetch(//use url to get exact recipe returns a promise
-        // `https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886`
-        `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`);
-        const data = await res.json(); //returns another promise
-        //data from serer, ok property is coming from response istaself
-        // if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-        //invalid id 400
-        console.log(res);
-        console.log(data);
-        //create new object get rid of underscores
-        let { recipe  } = data.data; //recipe object destructure it
-        recipe = {
-            id: recipe.id,
-            title: recipe.title,
-            publisher: recipe.publisher,
-            sourceUrl: recipe.source_url,
-            image: recipe.image_url,
-            servings: recipe.servings,
-            cookingTime: recipe.cooking_time,
-            ingredients: recipe.ingredients
-        };
+        //1 loading recipe
+        await _modelJs.loadRecipe(id); //have to await it returns a promise so have to await it
+        const { recipe  } = _modelJs.state;
         console.log(recipe);
-        // 2_.Rendering recipe
+        // 2.Rendering recipe
+        _recipeViewJsDefault.default.render(_modelJs.state.recipe); //add render method that takes indata and stores in boject
         const markup = `<figure class="recipe__fig">
     <img src="${recipe.image}" alt="${recipe.title}" class="recipe__img" />
     <h1 class="recipe__title">
@@ -605,8 +591,6 @@ const showRecipe = async function() {
       </svg>
     </a>
   </div>`;
-        recipeContainer.innerHTML = "";
-        recipeContainer.insertAdjacentHTML("afterbegin", markup);
     } catch (err) {
         //error being caught here
         alert(err);
@@ -616,14 +600,86 @@ const showRecipe = async function() {
 [
     "hashchange",
     "load"
-].forEach((ev)=>window.addEventListener(ev, showRecipe)
+].forEach((ev)=>window.addEventListener(ev, controlRecipes)
 ); //loop through and change events
- // window.addEventListener("hashchange", showRecipe);
+ // window.addEventListener("hashchange", controlRecipes);
  // //run show recipe function whenever hash changes
- // window.addEventListener("load", showRecipe);
+ // window.addEventListener("load", controlRecipes);
  // //event for entire page loading fired off when page loads
 
-},{"url:../img/icons.svg":"5jwFy","core-js/stable":"95FYz","regenerator-runtime/runtime":"1EBPE","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"5jwFy":[function(require,module,exports) {
+},{"./model.js":"1pVJj","url:../img/icons.svg":"5jwFy","core-js/stable":"95FYz","regenerator-runtime/runtime":"1EBPE","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","./views/recipeView.js":"82pEw"}],"1pVJj":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "state", ()=>state
+);
+parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe
+);
+const state = {
+    //will get update by load recipe function
+    recipe: {
+    }
+};
+const loadRecipe = async function(id) {
+    try {
+        const res = await fetch(//use url to get exact recipe returns a promise
+        // `https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886`
+        `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`);
+        const data = await res.json(); //returns another promise
+        //data from serer, ok property is coming from response istaself
+        // if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+        //invalid id 400
+        console.log(res);
+        console.log(data);
+        //create new object get rid of underscores
+        const { recipe  } = data.data; //recipe object destructure it
+        state.recipe = {
+            //update state object and manipulate directly
+            id: recipe.id,
+            title: recipe.title,
+            publisher: recipe.publisher,
+            sourceUrl: recipe.source_url,
+            image: recipe.image_url,
+            servings: recipe.servings,
+            cookingTime: recipe.cooking_time,
+            ingredients: recipe.ingredients
+        };
+        console.log(state.recipe);
+    } catch (err) {
+        alert(err);
+    }
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"ciiiV":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || dest.hasOwnProperty(key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"5jwFy":[function(require,module,exports) {
 module.exports = require('./helpers/bundle-url').getBundleURL('71ti3') + "icons.e7078503.svg" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"chiK4"}],"chiK4":[function(require,module,exports) {
@@ -13704,36 +13760,125 @@ try {
     else Function("r", "regeneratorRuntime = r")(runtime);
 }
 
-},{}],"ciiiV":[function(require,module,exports) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
+},{}],"82pEw":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class RecipeView {
+    #parentElement = document.querySelector(".recipe");
+    #data;
+    render(data) {
+        this.#data = data;
+        const markup = this.#generateMarkup;
+        this.#clear; //run clear method here
+        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+     #clear() {
+        this.#parentElement.innerHTML = "";
+    }
+    renderSpinner = function() {
+        //attach to any parent element passed in here
+        const markup = `
+  <div class="spinner">
+    <svg>
+      <use href="${icons}#icon-loader"></use>
+    </svg>
+   </div>
+  `;
+        this.#parentElement.innerHTML = "";
+        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
     };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, '__esModule', {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === 'default' || key === '__esModule' || dest.hasOwnProperty(key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
+     #generateMarkup() {
+        //each view will render different html
+        return `
+    <figure class="recipe__fig">
+    <img src="${this.#data.image}" alt="${this.#data.title}" class="recipe__img" />
+    <h1 class="recipe__title">
+      <span>${this.#data.title}</span>
+    </h1>
+  </figure>
 
-},{}]},["kS06O","lA0Es"], "lA0Es", "parcelRequiredf38")
+  <div class="recipe__details">
+    <div class="recipe__info">
+      <svg class="recipe__info-icon">
+        <use href="${icons}#icon-clock"></use>
+      </svg>
+      <span class="recipe__info-data recipe__info-data--minutes">${this.#data.cookingTime}</span>
+      <span class="recipe__info-text">minutes</span>
+    </div>
+    <div class="recipe__info">
+      <svg class="recipe__info-icon">
+        <use href="${icons}#icon-users"></use>
+      </svg>
+      <span class="recipe__info-data recipe__info-data--people">${this.#data.servings}</span>
+      <span class="recipe__info-text">servings</span>
+
+      <div class="recipe__info-buttons">
+        <button class="btn--tiny btn--increase-servings">
+          <svg>
+            <use href="${icons}#icon-minus-circle"></use>
+          </svg>
+        </button>
+        <button class="btn--tiny btn--increase-servings">
+          <svg>
+            <use href="${icons}#icon-plus-circle"></use>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="recipe__user-generated">
+      <svg>
+        <use href="${icons}#icon-user"></use>
+      </svg>
+    </div>
+    <button class="btn--round">
+      <svg class="">
+        <use href="${icons}#icon-bookmark-fill"></use>
+      </svg>
+    </button>
+  </div>
+
+  <div class="recipe__ingredients">
+    <h2 class="heading--2">Recipe ingredients</h2>
+    <ul class="recipe__ingredient-list">
+    ${this.#data.ingredients.map((ing)=>{
+            //return string of html inject it in the ingredient list ul
+            return `<li class="recipe__ingredient">
+      <svg class="recipe__icon">
+        <use href="src/img/icons.svg#icon-check"></use>
+      </svg>
+      <div class="recipe__quantity">${ing.quantity}</div>
+      <div class="recipe__description">
+        <span class="recipe__unit">${ing.unit}</span>
+        ${ing.description}
+      </div>
+    </li>`;
+        //transform array of strings into one big string using join
+        }).join("")}
+  </div>
+
+  <div class="recipe__directions">
+    <h2 class="heading--2">How to cook it</h2>
+    <p class="recipe__directions-text">
+      This recipe was carefully designed and tested by
+      <span class="recipe__publisher">${this.#data.publisher}</span>. Please check out
+      directions at their website.
+    </p>
+    <a
+      class="btn--small recipe__btn"
+      href="${this.#data.sourceUrl}"
+      target="_blank"
+    >
+      <span>Directions</span>
+      <svg class="search__icon">
+        <use href="src/img/icons.svg#icon-arrow-right"></use>
+      </svg>
+    </a>
+  </div>`;
+    }
+}
+exports.default = new RecipeView(); //default export of the cobject created by class
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}]},["kS06O","lA0Es"], "lA0Es", "parcelRequiredf38")
 
 //# sourceMappingURL=index.05cf099e.js.map
