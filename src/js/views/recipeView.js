@@ -1,11 +1,15 @@
+import icons from "url:../../img/icons.svg"; //Parcel 2 import icons variable
+import { Fraction } from "fractional";
+console.log(Fraction);
 class RecipeView {
   #parentElement = document.querySelector(".recipe");
   #data;
   render(data) {
+    //all views will have this
     this.#data = data;
-    const markup = this.#generateMarkup;
-    this.#clear; //run clear method here
-    this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+    const markup = this.#generateMarkup();
+    this.#clear(); //run clear method here
+    this.#parentElement.insertAdjacentHTML("afterbegin", markup); //inject markup into html afterbegin
   }
   #clear() {
     this.#parentElement.innerHTML = "";
@@ -13,17 +17,18 @@ class RecipeView {
   renderSpinner = function () {
     //attach to any parent element passed in here
     const markup = `
-  <div class="spinner">
-    <svg>
-      <use href="${icons}#icon-loader"></use>
-    </svg>
-   </div>
+      <div class="spinner">
+        <svg>
+          <use href="${icons}#icon-loader"></use>
+        </svg>
+      </div>
   `;
     this.#parentElement.innerHTML = "";
     this.#parentElement.insertAdjacentHTML("afterbegin", markup);
   };
 
   #generateMarkup() {
+    console.log(this.#data);
     //each view will render different html
     return `
     <figure class="recipe__fig">
@@ -83,22 +88,7 @@ class RecipeView {
   <div class="recipe__ingredients">
     <h2 class="heading--2">Recipe ingredients</h2>
     <ul class="recipe__ingredient-list">
-    ${this.#data.ingredients
-      .map((ing) => {
-        //return string of html inject it in the ingredient list ul
-        return `<li class="recipe__ingredient">
-      <svg class="recipe__icon">
-        <use href="src/img/icons.svg#icon-check"></use>
-      </svg>
-      <div class="recipe__quantity">${ing.quantity}</div>
-      <div class="recipe__description">
-        <span class="recipe__unit">${ing.unit}</span>
-        ${ing.description}
-      </div>
-    </li>`;
-        //transform array of strings into one big string using join
-      })
-      .join("")}
+    ${this.#data.ingredients.map(this.#generateMarkupIngredient).join("")}
   </div>
 
   <div class="recipe__directions">
@@ -121,6 +111,23 @@ class RecipeView {
       </svg>
     </a>
   </div>`;
+  }
+
+  #generateMarkupIngredient(ing) {
+    //return string of html inject it in the ingredient list ul
+    return `<li class="recipe__ingredient">
+  <svg class="recipe__icon">
+    <use href="src/img/icons.svg#icon-check"></use>
+  </svg>
+  <div class="recipe__quantity">${
+    ing.quantity ? new Fraction(ing.quantity).toString() : ""
+  }</div>
+  <div class="recipe__description">
+    <span class="recipe__unit">${ing.unit}</span>
+    ${ing.description}
+  </div>
+</li>`;
+    //transform array of strings into one big string using join
   }
 }
 

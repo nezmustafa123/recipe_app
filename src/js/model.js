@@ -15,8 +15,8 @@ export const loadRecipe = async function (id) {
     //data from serer, ok property is coming from response istaself
     // if (!res.ok) throw new Error(`${data.message} (${res.status})`);
     //invalid id 400
-    console.log(res);
-    console.log(data);
+    // console.log(res);
+    // console.log(data);
     //create new object get rid of underscores
     const { recipe } = data.data; //recipe object destructure it
     state.recipe = {
@@ -30,7 +30,7 @@ export const loadRecipe = async function (id) {
       cookingTime: recipe.cooking_time,
       ingredients: recipe.ingredients,
     };
-    console.log(state.recipe);
+    // console.log(state.recipe);
   } catch (err) {
     alert(err);
   }
