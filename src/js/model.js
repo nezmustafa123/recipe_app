@@ -1,3 +1,6 @@
+import { async } from "regenerator-runtime";
+import { API_URL } from "./config.js";
+import { getJSON } from "./helpers.js";
 //refactor into architecture
 export const state = {
   //will get update by load recipe function
@@ -6,17 +9,8 @@ export const state = {
 
 export const loadRecipe = async function (id) {
   try {
-    const res = await fetch(
-      //use url to get exact recipe returns a promise
-      // `https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886`
-      `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`
-    );
-    const data = await res.json(); //returns another promise
-    //data from serer, ok property is coming from response istaself
-    // if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-    //invalid id 400
-    // console.log(res);
-    // console.log(data);
+    const data = await getJSON(`${API_URL}/${id}`); //resolved value will be data and stored into data
+
     //create new object get rid of underscores
     const { recipe } = data.data; //recipe object destructure it
     state.recipe = {
@@ -32,6 +26,7 @@ export const loadRecipe = async function (id) {
     };
     // console.log(state.recipe);
   } catch (err) {
-    alert(err);
+    //Temp error handling error comes from getjson consequence of first error
+    console.error(`${err} xxxx`);
   }
 };
