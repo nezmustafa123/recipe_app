@@ -546,7 +546,7 @@ const loadRecipe = async function(id) {
     }
 };
 
-},{"regenerator-runtime":"1EBPE","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","./config.js":"6V52N","./helpers.js":"9RX9R"}],"1EBPE":[function(require,module,exports) {
+},{"regenerator-runtime":"1EBPE","./config.js":"6V52N","./helpers.js":"9RX9R","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"1EBPE":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -1126,7 +1126,17 @@ try {
     else Function("r", "regeneratorRuntime = r")(runtime);
 }
 
-},{}],"ciiiV":[function(require,module,exports) {
+},{}],"6V52N":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "API_URL", ()=>API_URL
+);
+parcelHelpers.export(exports, "TIMEOUT_SEC", ()=>TIMEOUT_SEC
+);
+const API_URL = "https://forkify-api.herokuapp.com/api/v2/recipes/";
+const TIMEOUT_SEC = 10;
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"ciiiV":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -1156,22 +1166,28 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"6V52N":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "API_URL", ()=>API_URL
-);
-const API_URL = "https://forkify-api.herokuapp.com/api/v2/recipes/";
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"9RX9R":[function(require,module,exports) {
+},{}],"9RX9R":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getJSON", ()=>getJSON
 );
+//stuff to help application
+var _regeneratorRuntime = require("regenerator-runtime");
+var _helpersJs = require("./helpers.js");
+const timeout = function(s) {
+    return new Promise(function(_, reject) {
+        setTimeout(function() {
+            reject(new Error(`Request took too long! Timeout after ${s} second`));
+        }, s * 1000);
+    });
+};
 const getJSON = async function(url) {
     //does fetching and converting to json all in one
     try {
-        const res = await fetch(url);
+        const res = await Promise.race([
+            fetch(url),
+            timeout(_helpersJs.TIMEOUT_SEC)
+        ]); //if fetch takes 10 seconds or more then timeout wins promise 'rejects'
         const data = await res.json(); //returns another promise
         //data from serer, ok property is coming from response itself
         //invalid id 400
@@ -1180,11 +1196,11 @@ const getJSON = async function(url) {
         if (!res.ok) throw new Error(`${data.message} (${res.status})`);
         return data; //will be resolved value of the promise in the function
     } catch (err) {
-        throw err; //rethrow error so PROMISE from get json gets rejected
+        throw err; //rethrow error so PROMISE from get json gets rejected and error is handled inside the model
     }
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"82pEw":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","regenerator-runtime":"1EBPE","./helpers.js":"9RX9R"}],"82pEw":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg"); //Parcel 2 import icons variable
