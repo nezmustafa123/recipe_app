@@ -468,13 +468,6 @@ var _stable = require("core-js/stable");
 var _runtime = require("regenerator-runtime/runtime");
 //console.log(icons); //path to the file
 // const recipeContainer = document.querySelector(".recipe");
-const timeout = function(s) {
-    return new Promise(function(_, reject) {
-        setTimeout(function() {
-            reject(new Error(`Request took too long! Timeout after ${s} second`));
-        }, s * 1000);
-    });
-};
 // https:forkify-api.herokuapp.com/v2
 ///////////////////////////////////////
 // console.log("Test");
@@ -497,16 +490,10 @@ const controlRecipes = async function() {
         alert(err);
     }
 };
-//run same eventhandler for diffferent events
-[
-    "hashchange",
-    "load"
-].forEach((ev)=>window.addEventListener(ev, controlRecipes)
-); //loop through and change events
- // window.addEventListener("hashchange", controlRecipes);
- // //run show recipe function whenever hash changes
- // window.addEventListener("load", controlRecipes);
- // //event for entire page loading fired off when page loads
+const init = function() {
+    _recipeViewJsDefault.default.addHandlerRender(controlRecipes);
+};
+init(); //init function runds and runs addHAndler render handlr render listes for events
 
 },{"./model.js":"1pVJj","./views/recipeView.js":"82pEw","core-js/stable":"95FYz","regenerator-runtime/runtime":"1EBPE","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"1pVJj":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -1173,7 +1160,7 @@ parcelHelpers.export(exports, "getJSON", ()=>getJSON
 );
 //stuff to help application
 var _regeneratorRuntime = require("regenerator-runtime");
-var _helpersJs = require("./helpers.js");
+var _configJs = require("./config.js");
 const timeout = function(s) {
     return new Promise(function(_, reject) {
         setTimeout(function() {
@@ -1186,12 +1173,12 @@ const getJSON = async function(url) {
     try {
         const res = await Promise.race([
             fetch(url),
-            timeout(_helpersJs.TIMEOUT_SEC)
+            timeout(_configJs.TIMEOUT_SEC)
         ]); //if fetch takes 10 seconds or more then timeout wins promise 'rejects'
         const data = await res.json(); //returns another promise
-        //data from serer, ok property is coming from response itself
+        //data from server, ok property is coming from response itself
         //invalid id 400
-        // console.log(res);
+        console.log(res);
         console.log(data);
         if (!res.ok) throw new Error(`${data.message} (${res.status})`);
         return data; //will be resolved value of the promise in the function
@@ -1200,7 +1187,7 @@ const getJSON = async function(url) {
     }
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","regenerator-runtime":"1EBPE","./helpers.js":"9RX9R"}],"82pEw":[function(require,module,exports) {
+},{"regenerator-runtime":"1EBPE","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","./config.js":"6V52N"}],"82pEw":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg"); //Parcel 2 import icons variable
@@ -1232,8 +1219,21 @@ class RecipeView {
         this.#parentElement.innerHTML = "";
         this.#parentElement.insertAdjacentHTML("afterbegin", markup);
     };
+    addHandlerRender(handler) {
+        [
+            "hashchange",
+            "load"
+        ].forEach((ev)=>window.addEventListener(ev, handler)
+        );
+    }
+    //run same eventhandler for diffferent events
+    //loop through and change events
+    // window.addEventListener("hashchange", controlRecipes);
+    // //run show recipe function whenever hash changes
+    // window.addEventListener("load", controlRecipes);
+    // //event for entire page loading fired off when page loads
      #generateMarkup() {
-        console.log(this.#data);
+        // console.log(this.#data);
         //each view will render different html
         return `
     <figure class="recipe__fig">

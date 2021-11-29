@@ -27,8 +27,21 @@ class RecipeView {
     this.#parentElement.insertAdjacentHTML("afterbegin", markup);
   };
 
+  addHandlerRender(handler) {
+    ["hashchange", "load"].forEach((ev) =>
+      window.addEventListener(ev, handler)
+    );
+  }
+
+  //run same eventhandler for diffferent events
+  //loop through and change events
+  // window.addEventListener("hashchange", controlRecipes);
+  // //run show recipe function whenever hash changes
+  // window.addEventListener("load", controlRecipes);
+  // //event for entire page loading fired off when page loads
+
   #generateMarkup() {
-    console.log(this.#data);
+    // console.log(this.#data);
     //each view will render different html
     return `
     <figure class="recipe__fig">

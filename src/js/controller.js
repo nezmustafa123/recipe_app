@@ -8,14 +8,6 @@ import "regenerator-runtime/runtime";
 
 // const recipeContainer = document.querySelector(".recipe");
 
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
-
 // https:forkify-api.herokuapp.com/v2
 
 ///////////////////////////////////////
@@ -44,11 +36,8 @@ const controlRecipes = async function () {
   }
 };
 
-//run same eventhandler for diffferent events
-["hashchange", "load"].forEach((ev) =>
-  window.addEventListener(ev, controlRecipes)
-); //loop through and change events
-// window.addEventListener("hashchange", controlRecipes);
-// //run show recipe function whenever hash changes
-// window.addEventListener("load", controlRecipes);
-// //event for entire page loading fired off when page loads
+const init = function () {
+  recipeView.addHandlerRender(controlRecipes);
+};
+init();
+//init function runds and runs addHAndler render handlr render listes for events
