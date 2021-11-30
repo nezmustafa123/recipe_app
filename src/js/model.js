@@ -28,5 +28,6 @@ export const loadRecipe = async function (id) {
   } catch (err) {
     //Temp error handling error comes from getjson consequence of first error
     console.error(`${err} xxxx`);
+    throw err; //have to rethrow the error maually to enter catchblock in control recipes
   }
 };

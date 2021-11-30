@@ -32,7 +32,8 @@ const controlRecipes = async function () {
     recipeView.render(model.state.recipe); //add render method that takes indata and stores in boject
   } catch (err) {
     //error being caught here
-    alert(err);
+    // alert(err);
+    recipeView.renderError(); //render it to user interface has access to error object
   }
 };
 

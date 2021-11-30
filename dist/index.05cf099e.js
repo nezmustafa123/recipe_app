@@ -487,7 +487,8 @@ const controlRecipes = async function() {
         _recipeViewJsDefault.default.render(_modelJs.state.recipe); //add render method that takes indata and stores in boject
     } catch (err) {
         //error being caught here
-        alert(err);
+        // alert(err);
+        _recipeViewJsDefault.default.renderError(); //render it to user interface has access to error object
     }
 };
 const init = function() {
@@ -530,6 +531,7 @@ const loadRecipe = async function(id) {
     } catch (err) {
         //Temp error handling error comes from getjson consequence of first error
         console.error(`${err} xxxx`);
+        throw err; //have to rethrow the error maually to enter catchblock in control recipes
     }
 };
 
@@ -1187,7 +1189,7 @@ const getJSON = async function(url) {
     }
 };
 
-},{"regenerator-runtime":"1EBPE","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","./config.js":"6V52N"}],"82pEw":[function(require,module,exports) {
+},{"regenerator-runtime":"1EBPE","./config.js":"6V52N","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"82pEw":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg"); //Parcel 2 import icons variable
@@ -1197,6 +1199,8 @@ console.log(_fractional.Fraction);
 class RecipeView {
     #parentElement = document.querySelector(".recipe");
     #data;
+    #errorMessage = "Could not find that recipe, try another search!";
+    #searchMessage = "";
     render(data) {
         //all views will have this
         this.#data = data;
@@ -1207,7 +1211,7 @@ class RecipeView {
      #clear() {
         this.#parentElement.innerHTML = "";
     }
-    renderSpinner = function() {
+    renderSpinner() {
         //attach to any parent element passed in here
         const markup = `
       <div class="spinner">
@@ -1216,9 +1220,41 @@ class RecipeView {
         </svg>
       </div>
   `;
-        this.#parentElement.innerHTML = "";
+        this.#clear();
         this.#parentElement.insertAdjacentHTML("afterbegin", markup);
-    };
+    }
+    renderError(message = this.#errorMessage) {
+        //defailt error message
+        //replace with icons variable
+        const markup = `
+    <div class="error">
+      <div>
+        <svg>
+          <use href="${_iconsSvgDefault.default}#icon-alert-triangle"></use>
+        </svg>
+      </div>
+      <p>${message}</p>
+    </div> 
+    `;
+        this.#clear();
+        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+    renderMessage(message1 = this.#searchMessage) {
+        //defailt error message
+        //replace with icons variable
+        const markup = `
+    <div class="message">
+      <div>
+        <svg>
+          <use href="${_iconsSvgDefault.default}#icon-smile"></use>
+        </svg>
+      </div>
+      <p>${message1}</p>
+    </div> 
+    `;
+        this.#clear();
+        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
     addHandlerRender(handler) {
         [
             "hashchange",
