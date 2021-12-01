@@ -503,17 +503,25 @@ parcelHelpers.export(exports, "state", ()=>state
 );
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe
 );
+parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults
+);
 var _regeneratorRuntime = require("regenerator-runtime");
 var _configJs = require("./config.js");
 var _helpersJs = require("./helpers.js");
 const state = {
+    //contains all data to build application
     //will get update by load recipe function
     recipe: {
+    },
+    search: {
+        query: "",
+        results: []
     }
 };
 const loadRecipe = async function(id) {
     try {
-        const data = await _helpersJs.getJSON(`${_configJs.API_URL}/${id}`); //resolved value will be data and stored into data
+        //specific recipe with spcefic id
+        const data = await _helpersJs.getJSON(`${_configJs.API_URL}${id}`); //resolved value will be data and stored into data
         //create new object get rid of underscores
         const { recipe  } = data.data; //recipe object destructure it
         state.recipe = {
@@ -531,9 +539,30 @@ const loadRecipe = async function(id) {
     } catch (err) {
         //Temp error handling error comes from getjson consequence of first error
         console.error(`${err} xxxx`);
-        throw err; //have to rethrow the error maually to enter catchblock in control recipes
+        throw err; //have to rethrow the error maually to enter catchblock in control recipes have access to same error objecy
     }
 };
+const loadSearchResults = async function(query) {
+    //search based off a search query
+    try {
+        state.search.query = query;
+        const data = await _helpersJs.getJSON(`${_configJs.API_URL}?search=${query}`); //object is called data with data property that is array with info
+        console.log(data); //recipes returned from query
+        state.search.results = data.data.recipes.map((rec)=>{
+            return {
+                id: rec.id,
+                title: rec.title,
+                publisher: rec.publisher,
+                image: rec.image_url
+            };
+        });
+        console.log(state.search.results);
+    } catch (err) {
+        console.error(`${err} xxxx`);
+        throw err;
+    }
+};
+loadSearchResults("pizza");
 
 },{"regenerator-runtime":"1EBPE","./config.js":"6V52N","./helpers.js":"9RX9R","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"1EBPE":[function(require,module,exports) {
 /**
@@ -1180,7 +1209,7 @@ const getJSON = async function(url) {
         const data = await res.json(); //returns another promise
         //data from server, ok property is coming from response itself
         //invalid id 400
-        console.log(res);
+        // console.log(res);
         console.log(data);
         if (!res.ok) throw new Error(`${data.message} (${res.status})`);
         return data; //will be resolved value of the promise in the function
@@ -1195,7 +1224,6 @@ parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg"); //Parcel 2 import icons variable
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 var _fractional = require("fractional");
-console.log(_fractional.Fraction);
 class RecipeView {
     #parentElement = document.querySelector(".recipe");
     #data;

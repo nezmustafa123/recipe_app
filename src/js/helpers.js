@@ -16,7 +16,7 @@ export const getJSON = async function (url) {
     const data = await res.json(); //returns another promise
     //data from server, ok property is coming from response itself
     //invalid id 400
-    console.log(res);
+    // console.log(res);
     console.log(data);
     if (!res.ok) throw new Error(`${data.message} (${res.status})`);
     return data; //will be resolved value of the promise in the function

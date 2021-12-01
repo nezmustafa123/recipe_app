@@ -249,12 +249,13 @@ body {
   background-color: #fff;
   border-radius: 10rem;
   display: flex;
+  width: 30rem;
   align-items: center;
-  padding-left: 3rem;
   transition: all 0.3s;
 }
 .search:focus-within {
-  transform: translateY(-2px);
+  transform: translateY(-6px);
+  width: 45rem;
   box-shadow: 0 0.7rem 3rem rgba(97, 85, 81, 0.08);
 }
 .search__field {
@@ -263,10 +264,10 @@ body {
   font-family: inherit;
   color: inherit;
   font-size: 1.7rem;
-  width: 30rem;
 }
 .search__field:focus {
   outline: none;
+  width: 45rem;
 }
 .search__field::placeholder {
   color: #d3c7c3;

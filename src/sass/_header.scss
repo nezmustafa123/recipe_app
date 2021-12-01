@@ -16,12 +16,14 @@
   background-color: #fff;
   border-radius: 10rem;
   display: flex;
+  width: 30rem;
   align-items: center;
-  padding-left: 3rem;
+  // padding-left: 3rem;
   transition: all 0.3s;
 
   &:focus-within {
-    transform: translateY(-2px);
+    transform: translateY(-6px);
+    width: 45rem;
     box-shadow: 0 0.7rem 3rem rgba($color-grey-dark-1, 0.08);
   }
 
@@ -31,10 +33,10 @@
     font-family: inherit;
     color: inherit;
     font-size: 1.7rem;
-    width: 30rem;
 
     &:focus {
       outline: none;
+      width: 45rem;
     }
 
     &::placeholder {
